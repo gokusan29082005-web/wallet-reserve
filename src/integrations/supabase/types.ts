@@ -14,10 +14,169 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price_per_unit: number
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price_per_unit: number
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price_per_unit?: number
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          collected_at: string | null
+          created_at: string | null
+          customer_id: string
+          id: string
+          pin_expiry: string
+          product_id: string
+          proxy_pin: number
+          quantity: number | null
+          reservation_date: string
+          status: string
+          total_amount: number
+        }
+        Insert: {
+          collected_at?: string | null
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          pin_expiry: string
+          product_id: string
+          proxy_pin: number
+          quantity?: number | null
+          reservation_date: string
+          status?: string
+          total_amount: number
+        }
+        Update: {
+          collected_at?: string | null
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          pin_expiry?: string
+          product_id?: string
+          proxy_pin?: number
+          quantity?: number | null
+          reservation_date?: string
+          status?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_ledger: {
+        Row: {
+          amount: number
+          created_at: string | null
+          customer_id: string
+          description: string | null
+          id: string
+          reference_id: string | null
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          customer_id: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          customer_id?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_ledger_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      customer_wallet_balance: {
+        Row: {
+          balance: number | null
+          customer_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_ledger_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
