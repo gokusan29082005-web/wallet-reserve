@@ -11,6 +11,8 @@ import CustomerReserves from "./pages/customer/CustomerReserves";
 import MerchantDashboard from "./pages/merchant/MerchantDashboard";
 import AddBalance from "./pages/merchant/AddBalance";
 import CustomerList from "./pages/merchant/CustomerList";
+import ProductManagement from "./pages/merchant/ProductManagement";
+import RevenueDashboard from "./pages/merchant/RevenueDashboard";
 
 const queryClient = new QueryClient();
 
