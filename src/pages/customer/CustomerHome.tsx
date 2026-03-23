@@ -45,13 +45,22 @@ export default function CustomerHome() {
           <ShoppingBag className="h-5 w-5 text-primary" />
           <span className="font-semibold text-foreground">DairyPay</span>
         </div>
-        <button
-          onClick={() => navigate("/customer/history")}
-          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors active:scale-95"
-        >
-          <Clock className="h-4 w-4" />
-          History
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/customer/reserves")}
+            className="flex items-center gap-1.5 text-sm text-primary font-medium hover:text-primary/80 transition-colors active:scale-95"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Your Reserves
+          </button>
+          <button
+            onClick={() => navigate("/customer/history")}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors active:scale-95"
+          >
+            <Clock className="h-4 w-4" />
+            History
+          </button>
+        </div>
       </div>
 
       <div className="p-4 space-y-6 max-w-md mx-auto animate-reveal">
