@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound";
 import CustomerHome from "./pages/customer/CustomerHome";
 import ReservationSuccess from "./pages/customer/ReservationSuccess";
 import CustomerHistory from "./pages/customer/CustomerHistory";
+import CustomerReserves from "./pages/customer/CustomerReserves";
 import MerchantDashboard from "./pages/merchant/MerchantDashboard";
 import AddBalance from "./pages/merchant/AddBalance";
 import CustomerList from "./pages/merchant/CustomerList";
