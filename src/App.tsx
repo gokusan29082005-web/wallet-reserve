@@ -1,9 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import AuthPage from "./pages/AuthPage";
 import CustomerHome from "./pages/customer/CustomerHome";
 import ReservationSuccess from "./pages/customer/ReservationSuccess";
 import CustomerHistory from "./pages/customer/CustomerHistory";
@@ -13,27 +13,75 @@ import AddBalance from "./pages/merchant/AddBalance";
 import CustomerList from "./pages/merchant/CustomerList";
 import ProductManagement from "./pages/merchant/ProductManagement";
 import RevenueDashboard from "./pages/merchant/RevenueDashboard";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: "merchant" }) {
+  const { user, role, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/auth" replace />;
+  if (requiredRole === "merchant" && role !== "merchant") {
+    return <Navigate to="/customer" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function AppRoutes() {
+  const { user, role, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to={role === "merchant" ? "/merchant" : "/customer"} replace />
+          ) : (
+            <Navigate to="/auth" replace />
+          )
+        }
+      />
+      <Route path="/auth" element={user ? <Navigate to={role === "merchant" ? "/merchant" : "/customer"} replace /> : <AuthPage />} />
+      <Route path="/customer" element={<ProtectedRoute><CustomerHome /></ProtectedRoute>} />
+      <Route path="/customer/success" element={<ProtectedRoute><ReservationSuccess /></ProtectedRoute>} />
+      <Route path="/customer/reserves" element={<ProtectedRoute><CustomerReserves /></ProtectedRoute>} />
+      <Route path="/customer/history" element={<ProtectedRoute><CustomerHistory /></ProtectedRoute>} />
+      <Route path="/merchant" element={<ProtectedRoute requiredRole="merchant"><MerchantDashboard /></ProtectedRoute>} />
+      <Route path="/merchant/add-balance" element={<ProtectedRoute requiredRole="merchant"><AddBalance /></ProtectedRoute>} />
+      <Route path="/merchant/customers" element={<ProtectedRoute requiredRole="merchant"><CustomerList /></ProtectedRoute>} />
+      <Route path="/merchant/products" element={<ProtectedRoute requiredRole="merchant"><ProductManagement /></ProtectedRoute>} />
+      <Route path="/merchant/revenue" element={<ProtectedRoute requiredRole="merchant"><RevenueDashboard /></ProtectedRoute>} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/customer" element={<CustomerHome />} />
-          <Route path="/customer/success" element={<ReservationSuccess />} />
-          <Route path="/customer/reserves" element={<CustomerReserves />} />
-          <Route path="/customer/history" element={<CustomerHistory />} />
-          <Route path="/merchant" element={<MerchantDashboard />} />
-          <Route path="/merchant/add-balance" element={<AddBalance />} />
-          <Route path="/merchant/customers" element={<CustomerList />} />
-          <Route path="/merchant/products" element={<ProductManagement />} />
-          <Route path="/merchant/revenue" element={<RevenueDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
