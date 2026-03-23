@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useReservationHistory } from "@/hooks/useReservations";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 
+const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+
 export default function CustomerHistory() {
   const navigate = useNavigate();
-  const { customerId } = useAuthContext();
-  const { data: reservations = [], isLoading } = useReservationHistory(customerId ?? "");
+  const { data: reservations = [], isLoading } = useReservationHistory(CUSTOMER_ID);
 
   return (
     <div className="min-h-screen bg-background">

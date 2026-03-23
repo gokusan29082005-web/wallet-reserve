@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Plus, Users, KeyRound, LogOut } from "lucide-react";
+import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft } from "lucide-react";
 import { useTodayReservations, useVerifyPin } from "@/hooks/useReservations";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 import { NumericKeypad } from "@/components/NumericKeypad";
@@ -10,7 +9,6 @@ import { toast } from "sonner";
 
 export default function MerchantDashboard() {
   const navigate = useNavigate();
-  const { signOut } = useAuthContext();
   const { data: reservations = [] } = useTodayReservations();
   const verify = useVerifyPin();
   const [pin, setPin] = useState("");
@@ -42,9 +40,13 @@ export default function MerchantDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
       <div className="sticky top-0 z-10 bg-card border-b border-border px-4 py-3">
         <div className="flex items-center justify-between max-w-5xl mx-auto">
           <div className="flex items-center gap-2">
+            <button onClick={() => navigate("/")} className="active:scale-95 transition-transform">
+              <ArrowLeft className="h-5 w-5 text-foreground" />
+            </button>
             <LayoutDashboard className="h-5 w-5 text-primary" />
             <span className="font-semibold text-foreground">Merchant Dashboard</span>
           </div>
@@ -63,19 +65,15 @@ export default function MerchantDashboard() {
               <Users className="h-3.5 w-3.5" />
               Customers
             </button>
-            <button
-              onClick={signOut}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground transition-all hover:text-destructive hover:border-destructive/30 active:scale-95"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto p-4 animate-reveal">
         <div className="grid gap-6 lg:grid-cols-5">
+          {/* Left — Reservations */}
           <div className="lg:col-span-3 space-y-4">
+            {/* Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
                 <div className="text-xs text-muted-foreground">Reserved</div>
@@ -87,6 +85,7 @@ export default function MerchantDashboard() {
               </div>
             </div>
 
+            {/* Today's reservations */}
             <div>
               <h2 className="text-sm font-medium text-muted-foreground mb-3">Today's Reservations</h2>
               <div className="space-y-2">
@@ -118,6 +117,7 @@ export default function MerchantDashboard() {
             </div>
           </div>
 
+          {/* Right — PIN verification */}
           <div className="lg:col-span-2">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sticky top-20">
               <div className="flex items-center gap-2 mb-4">
@@ -125,6 +125,7 @@ export default function MerchantDashboard() {
                 <h2 className="text-sm font-semibold text-foreground">Verify PIN</h2>
               </div>
 
+              {/* Success flash */}
               {successData && (
                 <div className="mb-4 rounded-xl bg-primary/10 border border-primary/20 p-4 text-center animate-flash-success">
                   <div className="text-lg font-bold text-primary">✓ Collected!</div>
@@ -137,6 +138,7 @@ export default function MerchantDashboard() {
                 </div>
               )}
 
+              {/* PIN display */}
               <div className={`flex justify-center gap-3 mb-6 ${pinError ? "animate-shake" : ""}`}>
                 {[0, 1, 2].map((i) => (
                   <div

@@ -1,27 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Wallet, Clock, ShoppingBag, LogOut } from "lucide-react";
+import { Wallet, Clock, ShoppingBag } from "lucide-react";
 import { useCustomerBalance } from "@/hooks/useCustomers";
 import { useProducts } from "@/hooks/useProducts";
 import { useReserveProduct } from "@/hooks/useReservations";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { formatRupees } from "@/lib/format";
 import { toast } from "sonner";
 
+const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+
 export default function CustomerHome() {
   const navigate = useNavigate();
-  const { customerId, signOut } = useAuthContext();
-  const { data: balance = 0, isLoading: balLoading } = useCustomerBalance(customerId ?? undefined);
+  const { data: balance = 0, isLoading: balLoading } = useCustomerBalance(CUSTOMER_ID);
   const { data: products = [] } = useProducts();
   const reserve = useReserveProduct();
   const [reserving, setReserving] = useState<string | null>(null);
 
   const handleReserve = async (productId: string, price: number) => {
-    if (!customerId) return;
     setReserving(productId);
     try {
       const result = await reserve.mutateAsync({
-        customerId,
+        customerId: CUSTOMER_ID,
         productId,
         pricePerUnit: price,
         quantity: 1,
@@ -61,12 +60,6 @@ export default function CustomerHome() {
             <Clock className="h-4 w-4" />
             History
           </button>
-          <button
-            onClick={signOut}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors active:scale-95"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
         </div>
       </div>
 
@@ -101,7 +94,7 @@ export default function CustomerHome() {
                   </div>
                 </div>
                 <button
-                  disabled={reserving === p.id || !customerId}
+                  disabled={reserving === p.id}
                   onClick={() => handleReserve(p.id, p.price_per_unit)}
                   className="w-full rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-all duration-150 hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
                 >
