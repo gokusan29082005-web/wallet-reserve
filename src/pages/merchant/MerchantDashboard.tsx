@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft, QrCode } from "lucide-react";
+import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft, QrCode, Package, TrendingUp } from "lucide-react";
 import { useTodayReservations, useVerifyPin } from "@/hooks/useReservations";
 import { useVerifyQR } from "@/hooks/useVerifyQR";
 import { StatusBadge } from "@/components/StatusBadge";
