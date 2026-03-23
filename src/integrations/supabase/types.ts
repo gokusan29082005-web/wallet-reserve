@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       customers: {
         Row: {
+          auth_id: string | null
           created_at: string | null
           id: string
           is_active: boolean | null
@@ -23,6 +24,7 @@ export type Database = {
           phone: string
         }
         Insert: {
+          auth_id?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
@@ -30,6 +32,7 @@ export type Database = {
           phone: string
         }
         Update: {
+          auth_id?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
@@ -122,6 +125,24 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallet_ledger: {
         Row: {
           amount: number
@@ -179,10 +200,17 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_customer_id_for_user: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "customer" | "merchant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -309,6 +337,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["customer", "merchant"],
+    },
   },
 } as const
