@@ -58,23 +58,33 @@ export default function CustomerReserves() {
               </div>
 
               {isActive && (
-                <div className="flex items-center justify-between rounded-lg bg-primary/10 p-3">
-                  <div>
-                    <div className="text-xs text-muted-foreground">Your PIN</div>
-                    <div className="text-2xl font-bold font-mono tracking-widest text-primary">
-                      {pin}
-                    </div>
+                <div className="rounded-lg bg-primary/10 p-4 space-y-3">
+                  <div className="flex justify-center">
+                    <QRCodeSVG
+                      value={`DAIRYPAY:${r.id}:${pin}`}
+                      size={140}
+                      bgColor="transparent"
+                      fgColor="hsl(var(--primary))"
+                    />
                   </div>
-                  <button
-                    onClick={() => copyPin(r.proxy_pin, r.id)}
-                    className="p-2 rounded-md hover:bg-primary/20 transition-colors active:scale-95"
-                  >
-                    {copiedId === r.id ? (
-                      <Check className="h-4 w-4 text-primary" />
-                    ) : (
-                      <Copy className="h-4 w-4 text-primary" />
-                    )}
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-muted-foreground">Your PIN</div>
+                      <div className="text-2xl font-bold font-mono tracking-widest text-primary">
+                        {pin}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => copyPin(r.proxy_pin, r.id)}
+                      className="p-2 rounded-md hover:bg-primary/20 transition-colors active:scale-95"
+                    >
+                      {copiedId === r.id ? (
+                        <Check className="h-4 w-4 text-primary" />
+                      ) : (
+                        <Copy className="h-4 w-4 text-primary" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               )}
 
