@@ -13,9 +13,11 @@ export default function MerchantDashboard() {
   const navigate = useNavigate();
   const { data: reservations = [] } = useTodayReservations();
   const verify = useVerifyPin();
+  const verifyQR = useVerifyQR();
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState(false);
   const [successData, setSuccessData] = useState<any>(null);
+  const [verifyMode, setVerifyMode] = useState<"pin" | "qr">("pin");
 
   const reserved = reservations.filter((r) => r.status === "RESERVED").length;
   const collected = reservations.filter((r) => r.status === "COLLECTED").length;
