@@ -38,10 +38,14 @@ export function useAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         if (session?.user) {
-          // Set basic state first, then fetch role
           setState((prev) => ({ ...prev, user: session.user, session, loading: true }));
-          const { role, customerId } = await fetchRoleAndCustomer(session.user.id);
-          setState({ user: session.user, session, role, customerId, loading: false });
+          try {
+            const { role, customerId } = await fetchRoleAndCustomer(session.user.id);
+            setState({ user: session.user, session, role, customerId, loading: false });
+          } catch (err) {
+            console.error("Failed to fetch role:", err);
+            setState({ user: session.user, session, role: "customer", customerId: null, loading: false });
+          }
         } else {
           setState({ user: null, session: null, role: null, customerId: null, loading: false });
         }
@@ -50,8 +54,13 @@ export function useAuth() {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        const { role, customerId } = await fetchRoleAndCustomer(session.user.id);
-        setState({ user: session.user, session, role, customerId, loading: false });
+        try {
+          const { role, customerId } = await fetchRoleAndCustomer(session.user.id);
+          setState({ user: session.user, session, role, customerId, loading: false });
+        } catch (err) {
+          console.error("Failed to fetch role:", err);
+          setState({ user: session.user, session, role: "customer", customerId: null, loading: false });
+        }
       } else {
         setState({ user: null, session: null, role: null, customerId: null, loading: false });
       }
