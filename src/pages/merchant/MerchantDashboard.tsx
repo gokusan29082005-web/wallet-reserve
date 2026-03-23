@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft, QrCode, Package, TrendingUp } from "lucide-react";
 import { useTodayReservations, useVerifyPin } from "@/hooks/useReservations";
+import { useVerifyQR } from "@/hooks/useVerifyQR";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 import { NumericKeypad } from "@/components/NumericKeypad";
+import { QRScanner } from "@/components/QRScanner";
 import { toast } from "sonner";
 
 export default function MerchantDashboard() {
   const navigate = useNavigate();
   const { data: reservations = [] } = useTodayReservations();
   const verify = useVerifyPin();
+  const verifyQR = useVerifyQR();
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState(false);
   const [successData, setSuccessData] = useState<any>(null);
+  const [verifyMode, setVerifyMode] = useState<"pin" | "qr">("pin");
 
   const reserved = reservations.filter((r) => r.status === "RESERVED").length;
   const collected = reservations.filter((r) => r.status === "COLLECTED").length;
@@ -64,6 +68,20 @@ export default function MerchantDashboard() {
             >
               <Users className="h-3.5 w-3.5" />
               Customers
+            </button>
+            <button
+              onClick={() => navigate("/merchant/products")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-secondary active:scale-95"
+            >
+              <Package className="h-3.5 w-3.5" />
+              Products
+            </button>
+            <button
+              onClick={() => navigate("/merchant/revenue")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-secondary active:scale-95"
+            >
+              <TrendingUp className="h-3.5 w-3.5" />
+              Revenue
             </button>
           </div>
         </div>
@@ -120,9 +138,30 @@ export default function MerchantDashboard() {
           {/* Right — PIN verification */}
           <div className="lg:col-span-2">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sticky top-20">
+              {/* Mode toggle */}
               <div className="flex items-center gap-2 mb-4">
-                <KeyRound className="h-4 w-4 text-primary" />
-                <h2 className="text-sm font-semibold text-foreground">Verify PIN</h2>
+                <button
+                  onClick={() => setVerifyMode("pin")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors ${
+                    verifyMode === "pin"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-foreground"
+                  }`}
+                >
+                  <KeyRound className="h-3.5 w-3.5" />
+                  PIN
+                </button>
+                <button
+                  onClick={() => setVerifyMode("qr")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors ${
+                    verifyMode === "qr"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-foreground"
+                  }`}
+                >
+                  <QrCode className="h-3.5 w-3.5" />
+                  QR Scan
+                </button>
               </div>
 
               {/* Success flash */}
@@ -138,33 +177,53 @@ export default function MerchantDashboard() {
                 </div>
               )}
 
-              {/* PIN display */}
-              <div className={`flex justify-center gap-3 mb-6 ${pinError ? "animate-shake" : ""}`}>
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className={`flex h-16 w-14 items-center justify-center rounded-xl border-2 text-3xl font-bold pin-display transition-colors ${
-                      pinError
-                        ? "border-destructive text-destructive"
-                        : pin[i]
-                          ? "border-primary text-foreground"
-                          : "border-border text-muted-foreground/30"
-                    }`}
-                  >
-                    {pin[i] ?? "·"}
+              {verifyMode === "pin" ? (
+                <>
+                  {/* PIN display */}
+                  <div className={`flex justify-center gap-3 mb-6 ${pinError ? "animate-shake" : ""}`}>
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className={`flex h-16 w-14 items-center justify-center rounded-xl border-2 text-3xl font-bold pin-display transition-colors ${
+                          pinError
+                            ? "border-destructive text-destructive"
+                            : pin[i]
+                              ? "border-primary text-foreground"
+                              : "border-border text-muted-foreground/30"
+                        }`}
+                      >
+                        {pin[i] ?? "·"}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {pinError && (
-                <p className="text-center text-sm font-medium text-destructive mb-4">Invalid PIN</p>
+                  {pinError && (
+                    <p className="text-center text-sm font-medium text-destructive mb-4">Invalid PIN</p>
+                  )}
+
+                  <NumericKeypad
+                    onDigit={handleDigit}
+                    onBackspace={() => { setPin(p => p.slice(0, -1)); setPinError(false); }}
+                    disabled={verify.isPending}
+                  />
+                </>
+              ) : (
+                <QRScanner
+                  disabled={verifyQR.isPending}
+                  onScan={(data) => {
+                    verifyQR.mutate(data, {
+                      onSuccess: (res) => {
+                        setSuccessData(res);
+                        toast.success("Reservation collected!");
+                        setTimeout(() => setSuccessData(null), 3000);
+                      },
+                      onError: () => {
+                        toast.error("Invalid or expired QR code");
+                      },
+                    });
+                  }}
+                />
               )}
-
-              <NumericKeypad
-                onDigit={handleDigit}
-                onBackspace={() => { setPin(p => p.slice(0, -1)); setPinError(false); }}
-                disabled={verify.isPending}
-              />
             </div>
           </div>
         </div>

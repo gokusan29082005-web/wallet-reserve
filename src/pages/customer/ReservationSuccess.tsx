@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, Share2, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function ReservationSuccess() {
   const location = useLocation();
@@ -49,9 +50,16 @@ export default function ReservationSuccess() {
           <p className="text-sm text-muted-foreground mt-1">Show this PIN at the shop</p>
         </div>
 
-        <div className="rounded-2xl border-2 border-primary/20 bg-card p-8 shadow-sm">
-          <div className="text-6xl font-bold pin-display text-foreground">{pin}</div>
-          <div className="mt-3 text-sm text-muted-foreground">
+        <div className="rounded-2xl border-2 border-primary/20 bg-card p-8 shadow-sm space-y-4">
+          <QRCodeSVG
+            value={`DAIRYPAY:${reservation.id}:${pin}`}
+            size={180}
+            className="mx-auto"
+            bgColor="transparent"
+            fgColor="hsl(var(--foreground))"
+          />
+          <div className="text-5xl font-bold pin-display text-foreground">{pin}</div>
+          <div className="text-sm text-muted-foreground">
             Expires in {timeLeft}
           </div>
         </div>
