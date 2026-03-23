@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, Share2, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function ReservationSuccess() {
   const location = useLocation();
