@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
+import { QRCodeSVG } from "qrcode.react";
 
 const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
 
