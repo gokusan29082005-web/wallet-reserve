@@ -69,6 +69,20 @@ export default function MerchantDashboard() {
               <Users className="h-3.5 w-3.5" />
               Customers
             </button>
+            <button
+              onClick={() => navigate("/merchant/products")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-secondary active:scale-95"
+            >
+              <Package className="h-3.5 w-3.5" />
+              Products
+            </button>
+            <button
+              onClick={() => navigate("/merchant/revenue")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-secondary active:scale-95"
+            >
+              <TrendingUp className="h-3.5 w-3.5" />
+              Revenue
+            </button>
           </div>
         </div>
       </div>

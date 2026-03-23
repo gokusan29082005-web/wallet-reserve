@@ -30,6 +30,8 @@ const App = () => (
           <Route path="/merchant" element={<MerchantDashboard />} />
           <Route path="/merchant/add-balance" element={<AddBalance />} />
           <Route path="/merchant/customers" element={<CustomerList />} />
+          <Route path="/merchant/products" element={<ProductManagement />} />
+          <Route path="/merchant/revenue" element={<RevenueDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
