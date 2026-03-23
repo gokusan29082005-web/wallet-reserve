@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Copy, Check } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useTodayReservations } from "@/hooks/useReservations";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
@@ -7,11 +8,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
-const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-
 export default function CustomerReserves() {
   const navigate = useNavigate();
-  const { data: reservations = [], isLoading } = useTodayReservations(CUSTOMER_ID);
+  const { customerId } = useAuth();
+  const { data: reservations = [], isLoading } = useTodayReservations(customerId ?? undefined);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const copyPin = (pin: number, id: string) => {
@@ -41,10 +41,7 @@ export default function CustomerReserves() {
           const isActive = r.status === "RESERVED" && !isExpired;
 
           return (
-            <div
-              key={r.id}
-              className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-3"
-            >
+            <div key={r.id} className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-semibold text-foreground">

@@ -1,26 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Wallet, Clock, ShoppingBag } from "lucide-react";
+import { Wallet, Clock, ShoppingBag, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useCustomerBalance } from "@/hooks/useCustomers";
 import { useProducts } from "@/hooks/useProducts";
 import { useReserveProduct } from "@/hooks/useReservations";
 import { formatRupees } from "@/lib/format";
 import { toast } from "sonner";
 
-const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-
 export default function CustomerHome() {
   const navigate = useNavigate();
-  const { data: balance = 0, isLoading: balLoading } = useCustomerBalance(CUSTOMER_ID);
+  const { customerId, user, signOut } = useAuth();
+  const { data: balance = 0, isLoading: balLoading } = useCustomerBalance(customerId ?? undefined);
   const { data: products = [] } = useProducts();
   const reserve = useReserveProduct();
   const [reserving, setReserving] = useState<string | null>(null);
 
   const handleReserve = async (productId: string, price: number) => {
+    if (!customerId) {
+      toast.error("Customer profile not found");
+      return;
+    }
     setReserving(productId);
     try {
       const result = await reserve.mutateAsync({
-        customerId: CUSTOMER_ID,
+        customerId,
         productId,
         pricePerUnit: price,
         quantity: 1,
@@ -60,6 +64,12 @@ export default function CustomerHome() {
             <Clock className="h-4 w-4" />
             History
           </button>
+          <button
+            onClick={signOut}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors active:scale-95"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
@@ -73,6 +83,7 @@ export default function CustomerHome() {
           <div className="mt-2 text-4xl font-bold amount-display">
             {balLoading ? "..." : formatRupees(balance)}
           </div>
+          <div className="mt-1 text-xs opacity-60">{user?.email}</div>
         </div>
 
         {/* Products */}
@@ -80,10 +91,7 @@ export default function CustomerHome() {
           <h2 className="text-sm font-medium text-muted-foreground mb-3">Today's Products</h2>
           <div className="space-y-3">
             {products.map((p) => (
-              <div
-                key={p.id}
-                className="rounded-xl border border-border bg-card p-4 shadow-sm"
-              >
+              <div key={p.id} className="rounded-xl border border-border bg-card p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="font-semibold text-foreground">{p.name}</div>
@@ -94,7 +102,7 @@ export default function CustomerHome() {
                   </div>
                 </div>
                 <button
-                  disabled={reserving === p.id}
+                  disabled={reserving === p.id || !customerId}
                   onClick={() => handleReserve(p.id, p.price_per_unit)}
                   className="w-full rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-all duration-150 hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
                 >
