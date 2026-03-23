@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import { useTodayReservations } from "@/hooks/useReservations";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const CUSTOMER_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-
 export default function CustomerReserves() {
   const navigate = useNavigate();
-  const { data: reservations = [], isLoading } = useTodayReservations(CUSTOMER_ID);
+  const { customerId } = useAuthContext();
+  const { data: reservations = [], isLoading } = useTodayReservations(customerId ?? undefined);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const copyPin = (pin: number, id: string) => {
