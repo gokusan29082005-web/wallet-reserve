@@ -17,7 +17,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: "merchant" }) {
+function ProtectedRoute({
+  children,
+  requiredRole,
+}: {
+  children: React.ReactNode;
+  requiredRole?: "merchant";
+}) {
   const { user, role, loading } = useAuth();
 
   if (loading) {
@@ -53,22 +59,100 @@ function AppRoutes() {
         path="/"
         element={
           user ? (
-            <Navigate to={role === "merchant" ? "/merchant" : "/customer"} replace />
+            <Navigate
+              to={role === "merchant" ? "/merchant" : "/customer"}
+              replace
+            />
           ) : (
             <Navigate to="/auth" replace />
           )
         }
       />
-      <Route path="/auth" element={user ? <Navigate to={role === "merchant" ? "/merchant" : "/customer"} replace /> : <AuthPage />} />
-      <Route path="/customer" element={<ProtectedRoute><CustomerHome /></ProtectedRoute>} />
-      <Route path="/customer/success" element={<ProtectedRoute><ReservationSuccess /></ProtectedRoute>} />
-      <Route path="/customer/reserves" element={<ProtectedRoute><CustomerReserves /></ProtectedRoute>} />
-      <Route path="/customer/history" element={<ProtectedRoute><CustomerHistory /></ProtectedRoute>} />
-      <Route path="/merchant" element={<ProtectedRoute requiredRole="merchant"><MerchantDashboard /></ProtectedRoute>} />
-      <Route path="/merchant/add-balance" element={<ProtectedRoute requiredRole="merchant"><AddBalance /></ProtectedRoute>} />
-      <Route path="/merchant/customers" element={<ProtectedRoute requiredRole="merchant"><CustomerList /></ProtectedRoute>} />
-      <Route path="/merchant/products" element={<ProtectedRoute requiredRole="merchant"><ProductManagement /></ProtectedRoute>} />
-      <Route path="/merchant/revenue" element={<ProtectedRoute requiredRole="merchant"><RevenueDashboard /></ProtectedRoute>} />
+      <Route
+        path="/auth"
+        element={
+          user ? (
+            <Navigate
+              to={role === "merchant" ? "/merchant" : "/customer"}
+              replace
+            />
+          ) : (
+            <AuthPage />
+          )
+        }
+      />
+      <Route
+        path="/customer"
+        element={
+          <ProtectedRoute>
+            <CustomerHome />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/success"
+        element={
+          <ProtectedRoute>
+            <ReservationSuccess />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/reserves"
+        element={
+          <ProtectedRoute>
+            <CustomerReserves />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/history"
+        element={
+          <ProtectedRoute>
+            <CustomerHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/merchant"
+        element={
+          <ProtectedRoute requiredRole="merchant">
+            <MerchantDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/merchant/add-balance"
+        element={
+          <ProtectedRoute requiredRole="merchant">
+            <AddBalance />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/merchant/customers"
+        element={
+          <ProtectedRoute requiredRole="merchant">
+            <CustomerList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/merchant/products"
+        element={
+          <ProtectedRoute requiredRole="merchant">
+            <ProductManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/merchant/revenue"
+        element={
+          <ProtectedRoute requiredRole="merchant">
+            <RevenueDashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -59,7 +59,9 @@ export default function AuthPage() {
           </div>
           <h1 className="text-2xl font-bold text-foreground">DairyPay</h1>
           <p className="text-sm text-muted-foreground">
-            {mode === "login" ? "Sign in to your account" : "Create a new account"}
+            {mode === "login"
+              ? "Sign in to your account"
+              : "Create a new account"}
           </p>
         </div>
 
@@ -68,7 +70,9 @@ export default function AuthPage() {
           {mode === "signup" && (
             <>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -79,7 +83,9 @@ export default function AuthPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">Phone</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">
+                  Phone
+                </label>
                 <input
                   type="tel"
                   value={phone}
@@ -93,7 +99,9 @@ export default function AuthPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -105,7 +113,9 @@ export default function AuthPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -141,14 +151,20 @@ export default function AuthPage() {
           {mode === "login" ? (
             <>
               Don't have an account?{" "}
-              <button onClick={() => setMode("signup")} className="font-medium text-primary hover:underline">
+              <button
+                onClick={() => setMode("signup")}
+                className="font-medium text-primary hover:underline"
+              >
                 Sign up
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button onClick={() => setMode("login")} className="font-medium text-primary hover:underline">
+              <button
+                onClick={() => setMode("login")}
+                className="font-medium text-primary hover:underline"
+              >
                 Sign in
               </button>
             </>
