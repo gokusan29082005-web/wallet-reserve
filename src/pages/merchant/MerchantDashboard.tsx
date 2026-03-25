@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft, QrCode, Package, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Plus, Users, KeyRound, ArrowLeft, QrCode, Package, TrendingUp, LogOut } from "lucide-react";
 import { useTodayReservations, useVerifyPin } from "@/hooks/useReservations";
 import { useVerifyQR } from "@/hooks/useVerifyQR";
+import { useAuth } from "@/hooks/useAuth";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatRupees } from "@/lib/format";
 import { NumericKeypad } from "@/components/NumericKeypad";
@@ -11,6 +12,7 @@ import { toast } from "sonner";
 
 export default function MerchantDashboard() {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { data: reservations = [] } = useTodayReservations();
   const verify = useVerifyPin();
   const verifyQR = useVerifyQR();
@@ -82,6 +84,17 @@ export default function MerchantDashboard() {
             >
               <TrendingUp className="h-3.5 w-3.5" />
               Revenue
+            </button>
+            <button
+              onClick={async () => {
+                await signOut();
+                navigate("/auth");
+              }}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive transition-all hover:bg-destructive/20 active:scale-95"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Logout
             </button>
           </div>
         </div>

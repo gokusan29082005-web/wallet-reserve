@@ -22,7 +22,7 @@ function ProtectedRoute({
   requiredRole,
 }: {
   children: React.ReactNode;
-  requiredRole?: "merchant";
+  requiredRole?: "merchant" | "customer";
 }) {
   const { user, role, loading } = useAuth();
 
@@ -35,8 +35,13 @@ function ProtectedRoute({
   }
 
   if (!user) return <Navigate to="/auth" replace />;
+  
   if (requiredRole === "merchant" && role !== "merchant") {
     return <Navigate to="/customer" replace />;
+  }
+  
+  if (requiredRole === "customer" && role !== "customer") {
+    return <Navigate to="/merchant" replace />;
   }
 
   return <>{children}</>;
@@ -84,7 +89,7 @@ function AppRoutes() {
       <Route
         path="/customer"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="customer">
             <CustomerHome />
           </ProtectedRoute>
         }
@@ -92,7 +97,7 @@ function AppRoutes() {
       <Route
         path="/customer/success"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="customer">
             <ReservationSuccess />
           </ProtectedRoute>
         }
@@ -100,7 +105,7 @@ function AppRoutes() {
       <Route
         path="/customer/reserves"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="customer">
             <CustomerReserves />
           </ProtectedRoute>
         }
@@ -108,7 +113,7 @@ function AppRoutes() {
       <Route
         path="/customer/history"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="customer">
             <CustomerHistory />
           </ProtectedRoute>
         }
